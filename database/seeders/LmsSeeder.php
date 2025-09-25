@@ -19,40 +19,46 @@ class LmsSeeder extends Seeder
     {
         // ===== USERS =====
         $admin = User::create([
-            'name' => 'Admin Instruktur',
+            'name' => 'Super Admin',
             'email' => 'admin@lms.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('password123'),
         ]);
+        $admin->assignRole('admin');
 
         $instructor1 = User::create([
             'name' => 'Budi Santoso',
-            'email' => 'budi@lms.com',
-            'password' => Hash::make('password'),
+            'email' => 'budi.santoso@lms.com',
+            'password' => Hash::make('password123'),
         ]);
+        $instructor1->assignRole('instructor');
 
         $instructor2 = User::create([
             'name' => 'Siti Aminah',
-            'email' => 'siti@lms.com',
-            'password' => Hash::make('password'),
+            'email' => 'siti.aminah@lms.com',
+            'password' => Hash::make('password123'),
         ]);
+        $instructor2->assignRole('instructor');
 
         $student1 = User::create([
             'name' => 'Andi Pratama',
-            'email' => 'andi@lms.com',
-            'password' => Hash::make('password'),
+            'email' => 'andi.pratama@lms.com',
+            'password' => Hash::make('password123'),
         ]);
+        $student1->assignRole('student');
 
         $student2 = User::create([
             'name' => 'Dewi Lestari',
-            'email' => 'dewi@lms.com',
-            'password' => Hash::make('password'),
+            'email' => 'dewi.lestari@lms.com',
+            'password' => Hash::make('password123'),
         ]);
+        $student2->assignRole('student');
 
         $student3 = User::create([
             'name' => 'Rizky Maulana',
-            'email' => 'rizky@lms.com',
-            'password' => Hash::make('password'),
+            'email' => 'rizky.maulana@lms.com',
+            'password' => Hash::make('password123'),
         ]);
+        $student3->assignRole('student');
 
         // ===== CATEGORIES =====
         $programming = Category::create(['name' => 'Programming', 'slug' => 'programming']);
@@ -62,74 +68,87 @@ class LmsSeeder extends Seeder
         // ===== COURSES =====
         $course1 = Course::create([
             'category_id' => $programming->id,
-            'user_id'     => $admin->id,
-            'title'       => 'Belajar Laravel 11 dari Dasar',
-            'slug'        => 'belajar-laravel-11-dari-dasar',
-            'description' => 'Kursus lengkap Laravel 11 mulai dari dasar sampai mahir.',
+            'user_id'     => $instructor1->id,
+            'title'       => 'Laravel 11 untuk Pemula',
+            'slug'        => 'laravel-11-untuk-pemula',
+            'description' => 'Kuasai Laravel 11 mulai dari instalasi hingga deployment.',
             'price'       => 250000,
             'status'      => 'published',
         ]);
 
         $course2 = Course::create([
             'category_id' => $design->id,
-            'user_id'     => $instructor1->id,
-            'title'       => 'Fundamental UI/UX Design untuk Pemula',
-            'slug'        => 'fundamental-ui-ux-design-untuk-pemula',
-            'description' => 'Pelajari dasar-dasar desain antarmuka dan pengalaman pengguna.',
-            'price'       => 150000,
+            'user_id'     => $instructor2->id,
+            'title'       => 'UI/UX Design Mastery',
+            'slug'        => 'ui-ux-design-mastery',
+            'description' => 'Belajar desain UI/UX dengan studi kasus nyata.',
+            'price'       => 175000,
             'status'      => 'published',
         ]);
 
         $course3 = Course::create([
             'category_id' => $business->id,
-            'user_id'     => $instructor2->id,
-            'title'       => 'Manajemen Bisnis Modern',
-            'slug'        => 'manajemen-bisnis-modern',
-            'description' => 'Strategi manajemen bisnis di era digital.',
+            'user_id'     => $admin->id,
+            'title'       => 'Digital Business Management',
+            'slug'        => 'digital-business-management',
+            'description' => 'Pelajari manajemen bisnis modern di era digital.',
             'price'       => 300000,
             'status'      => 'published',
         ]);
 
         // ===== LESSONS =====
         Lesson::insert([
+            // Course 1
             [
                 'course_id' => $course1->id,
-                'title'     => 'Pengenalan Laravel',
-                'slug'      => 'pengenalan-laravel',
-                'content'   => 'Apa itu Laravel dan kenapa banyak digunakan.',
+                'title'     => 'Pengenalan Framework Laravel',
+                'slug'      => 'pengenalan-framework-laravel',
+                'content'   => 'Mengapa Laravel menjadi framework PHP paling populer.',
                 'video_url' => 'https://youtu.be/vid1',
                 'order'     => 1,
             ],
             [
                 'course_id' => $course1->id,
-                'title'     => 'Instalasi Laravel 11',
-                'slug'      => 'instalasi-laravel-11',
-                'content'   => 'Langkah instalasi Laravel menggunakan Composer.',
+                'title'     => 'Instalasi & Setup Laravel 11',
+                'slug'      => 'instalasi-setup-laravel-11',
+                'content'   => 'Langkah demi langkah instalasi Laravel menggunakan Composer.',
                 'video_url' => 'https://youtu.be/vid2',
                 'order'     => 2,
             ],
             [
                 'course_id' => $course1->id,
                 'title'     => 'Routing & Controller',
-                'slug'      => 'routing-controller',
-                'content'   => 'Dasar routing dan controller di Laravel.',
+                'slug'      => 'routing-dan-controller',
+                'content'   => 'Belajar routing, controller, dan struktur dasar MVC di Laravel.',
                 'video_url' => 'https://youtu.be/vid3',
                 'order'     => 3,
             ],
+
+            // Course 2
             [
                 'course_id' => $course2->id,
-                'title'     => 'Dasar UI Design',
-                'slug'      => 'dasar-ui-design',
-                'content'   => 'Mengenal elemen dasar desain antarmuka.',
+                'title'     => 'Prinsip Dasar UI Design',
+                'slug'      => 'prinsip-dasar-ui-design',
+                'content'   => 'Warna, tipografi, dan layout dalam desain UI.',
                 'video_url' => 'https://youtu.be/vid4',
                 'order'     => 1,
             ],
             [
-                'course_id' => $course3->id,
-                'title'     => 'Konsep Manajemen',
-                'slug'      => 'konsep-manajemen',
-                'content'   => 'Memahami konsep dasar manajemen modern.',
+                'course_id' => $course2->id,
+                'title'     => 'User Experience Fundamentals',
+                'slug'      => 'user-experience-fundamentals',
+                'content'   => 'Dasar-dasar pengalaman pengguna dalam desain produk digital.',
                 'video_url' => 'https://youtu.be/vid5',
+                'order'     => 2,
+            ],
+
+            // Course 3
+            [
+                'course_id' => $course3->id,
+                'title'     => 'Strategi Bisnis Digital',
+                'slug'      => 'strategi-bisnis-digital',
+                'content'   => 'Cara merancang model bisnis yang sukses di era digital.',
+                'video_url' => 'https://youtu.be/vid6',
                 'order'     => 1,
             ],
         ]);
@@ -138,7 +157,7 @@ class LmsSeeder extends Seeder
         $enroll1 = Enrollment::create([
             'user_id'    => $student1->id,
             'course_id'  => $course1->id,
-            'enrolled_at' => now(),
+            'enrolled_at'=> now(),
         ]);
         Payment::create([
             'enrollment_id' => $enroll1->id,
@@ -151,13 +170,13 @@ class LmsSeeder extends Seeder
             'user_id'   => $student1->id,
             'course_id' => $course1->id,
             'rating'    => 5,
-            'comment'   => 'Materinya jelas dan mudah dipahami.',
+            'comment'   => 'Kursusnya sangat membantu, materi mudah dipahami!',
         ]);
 
         $enroll2 = Enrollment::create([
             'user_id'    => $student2->id,
             'course_id'  => $course2->id,
-            'enrolled_at' => now(),
+            'enrolled_at'=> now(),
         ]);
         Payment::create([
             'enrollment_id' => $enroll2->id,
@@ -170,13 +189,13 @@ class LmsSeeder extends Seeder
             'user_id'   => $student2->id,
             'course_id' => $course2->id,
             'rating'    => 4,
-            'comment'   => 'Cukup membantu untuk pemula.',
+            'comment'   => 'Materi bagus, tapi sebaiknya ada lebih banyak contoh studi kasus.',
         ]);
 
         $enroll3 = Enrollment::create([
             'user_id'    => $student3->id,
             'course_id'  => $course3->id,
-            'enrolled_at' => now(),
+            'enrolled_at'=> now(),
         ]);
         Payment::create([
             'enrollment_id' => $enroll3->id,
@@ -193,8 +212,8 @@ class LmsSeeder extends Seeder
                 'code'                => 'NEWYEAR25',
                 'discount_percentage' => 25,
                 'discount_amount'     => null,
-                'start_date'          => now()->subDays(5),
-                'end_date'            => now()->addDays(20),
+                'start_date'          => now()->subWeek(),
+                'end_date'            => now()->addWeeks(2),
             ],
             [
                 'title'               => 'Promo Kemerdekaan',
@@ -203,7 +222,7 @@ class LmsSeeder extends Seeder
                 'discount_percentage' => 45,
                 'discount_amount'     => null,
                 'start_date'          => now()->subDays(10),
-                'end_date'            => now()->addDays(30),
+                'end_date'            => now()->addDays(20),
             ],
         ]);
     }
