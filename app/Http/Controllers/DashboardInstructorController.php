@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+
 class DashboardInstructorController extends Controller
 {
     /**
@@ -11,7 +12,7 @@ class DashboardInstructorController extends Controller
      */
     public function index()
     {
-        //
+        return view('pages.dashboard.dashboard_instructor');
     }
 
     /**

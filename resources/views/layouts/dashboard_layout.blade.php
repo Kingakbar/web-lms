@@ -52,13 +52,36 @@
 
             {{-- ================= INSTRUCTOR ================= --}}
             @role('instructor')
-                <li><a href=""><i class="bi bi-house"></i><span>Dashboard</span></a></li>
-                <li><a href=""><i class="bi bi-book"></i><span>Kursus Saya</span></a></li>
-                <li><a href="#"><i class="bi bi-upload"></i><span>Kelola Materi</span></a></li>
+                <li>
+                    <a href="{{ route('dashboard.instructor') }}" class="{{ request()->is('dashboard*') ? 'active' : '' }}">
+                        <i class="bi bi-house"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('courses_instructor.index') }}"
+                        class="{{ request()->is('courses_instructor*') ? 'active' : '' }}">
+                        <i class="bi bi-journal"></i>
+                        <span>Kursus Saya</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('lessons.index') }}" class="{{ request()->is('lessons*') ? 'active' : '' }}">
+                        <i class="bi bi-upload"></i>
+                        <span>Kelola Materi</span>
+                    </a>
+                </li>
+
                 <li><a href="#"><i class="bi bi-people"></i><span>Siswa Terdaftar</span></a></li>
                 <li><a href="#"><i class="bi bi-star"></i><span>Review</span></a></li>
                 <li><a href="#"><i class="bi bi-cash-coin"></i><span>Pendapatan</span></a></li>
-                <li><a href="#"><i class="bi bi-gear"></i><span>Pengaturan</span></a></li>
+                <li>
+                    <a href="{{ route('settings.page') }}" class="{{ request()->is('settings*') ? 'active' : '' }}">
+                        <i class="bi bi-gear"></i>
+                        <span>Pengaturan</span>
+                    </a>
+                </li>
                 <li>
                     <a href="#" onclick="confirmLogout(event)">
                         <i class="bi bi-box-arrow-right"></i>
@@ -116,9 +139,23 @@
                     </a>
                 </li>
 
+                <li>
+                    <a href="{{ route('reports.index') }}" class="{{ request()->is('reports*') ? 'active' : '' }}">
+                        <i class="bi bi-bar-chart"></i>
+                        <span>Laporan</span>
+                    </a>
+                </li>
 
-                <li><a href="#"><i class="bi bi-bar-chart"></i><span>Laporan</span></a></li>
-                <li><a href="#"><i class="bi bi-gear"></i><span>Pengaturan Sistem</span></a></li>
+                <li>
+                    <a href="{{ route('settings.page') }}" class="{{ request()->is('settings*') ? 'active' : '' }}">
+                        <i class="bi bi-gear"></i>
+                        <span>Pengaturan</span>
+                    </a>
+                </li>
+
+
+
+                {{-- <li><a href="#"><i class="bi bi-gear"></i><span>Pengaturan Sistem</span></a></li> --}}
                 <li>
                     <a href="#" onclick="confirmLogout(event)">
                         <i class="bi bi-box-arrow-right"></i>
@@ -150,11 +187,19 @@
             <div class="user-menu ms-auto">
                 <div class="dropdown">
                     <button class="btn btn-link p-0" data-bs-toggle="dropdown">
-                        <div class="user-avatar">JD</div>
+                        @if (Auth::user()->profile_picture)
+                            <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="Avatar"
+                                class="rounded-circle profile-avatar">
+                        @else
+                            <div class="user-avatar">
+                                {{ strtoupper(collect(explode(' ', Auth::user()->name))->map(fn($word) => $word[0])->take(2)->join('')) }}
+                            </div>
+                        @endif
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Pengaturan</a>
+                        <li><a class="dropdown-item" href="{{ route('settings.page') }}"><i
+                                    class="bi bi-gear me-2"></i>Pengaturan</a>
                         </li>
                         <li>
                             <hr class="dropdown-divider">
@@ -163,16 +208,15 @@
                             <a class="dropdown-item text-danger" href="#" onclick="confirmLogout(event)">
                                 <i class="bi bi-box-arrow-right me-2"></i> Logout
                             </a>
-
                             <form id="logout-form" action="{{ route('logout') }}" method="POST"
                                 style="display: none;">
                                 @csrf
                             </form>
                         </li>
-
                     </ul>
                 </div>
             </div>
+
         </header>
 
 

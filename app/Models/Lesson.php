@@ -20,4 +20,9 @@ class Lesson extends Model
     {
         return $this->belongsTo(Course::class);
     }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

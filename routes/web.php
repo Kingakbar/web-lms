@@ -3,11 +3,16 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PromoController;
+use App\Http\Controllers\LessonController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\CourseAdminController;
 use App\Http\Controllers\TranscationController;
 use App\Http\Controllers\DashboardAdminController;
+use App\Http\Controllers\CourseInsctructorController;
+use App\Http\Controllers\DashboardInstructorController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,7 +32,13 @@ Route::middleware(['auth', 'role:student'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:instructor'])->group(function () {
-    Route::get('/dashboard/instructor', fn() => view('pages.dashboard.dashboard_instructor'))->name('dashboard.instructor');
+    Route::get('/dashboard/instructor', [DashboardInstructorController::class, 'index'])->name('dashboard.instructor');
+    Route::resource('/courses_instructor', CourseInsctructorController::class)->parameters([
+        'courses' => 'course:slug'
+    ]);
+    Route::resource('lessons', LessonController::class)->parameters([
+        'lessons' => 'lesson:slug'
+    ]);
 });
 
 
@@ -52,4 +63,15 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('/promos', PromoController::class)->parameters([
         'promos' => 'promo:slug'
     ]);
+
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+    });
+});
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/settings', [SettingController::class, 'settingPage'])->name('settings.page');
+    Route::put('/settings/profile', [SettingController::class, 'updateProfile'])->name('settings.updateProfile');
+    Route::put('/settings/password', [SettingController::class, 'updatePassword'])->name('settings.updatePassword');
 });

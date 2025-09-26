@@ -49,7 +49,7 @@ class TranscationController extends Controller
     public function edit(Payment $transaction)
     {
         $transaction->load(['enrollment.user', 'enrollment.course']);
-        return view('pages.admin.transactions.edit', compact('transaction'));
+        return view('pages.admin.transaction.transaction_edit', compact('transaction'));
     }
 
     /**
@@ -58,7 +58,7 @@ class TranscationController extends Controller
     public function update(Request $request, Payment $transaction)
     {
         $request->validate([
-            'status' => 'required|in:pending,paid,failed'
+            'status' => 'required|in:pending,completed,failed'
         ]);
 
         $transaction->update([
