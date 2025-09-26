@@ -10,6 +10,10 @@
         rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
     <link rel="shortcut icon" href="{{ asset('assets/img/logo.png') }}" type="image/x-icon">
+    {{-- DataTables CSS --}}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    {{-- Bootstrap Icons --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     @stack('styles')
 </head>
 
@@ -83,10 +87,36 @@
                     </a>
                 </li>
 
-                <li><a href="#"><i class="bi bi-tags"></i><span>Kategori</span></a></li>
-                <li><a href="#"><i class="bi bi-journal"></i><span>Semua Kursus</span></a></li>
-                <li><a href="#"><i class="bi bi-wallet2"></i><span>Transaksi</span></a></li>
-                <li><a href="#"><i class="bi bi-ticket"></i><span>Promo</span></a></li>
+                <li>
+                    <a href="{{ route('categories.index') }}" class="{{ request()->is('categories*') ? 'active' : '' }}">
+                        <i class="bi bi-tags"></i>
+                        <span>Kategori</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('courses.index') }}" class="{{ request()->is('courses*') ? 'active' : '' }}">
+                        <i class="bi bi-journal"></i>
+                        <span>Semua Kursus</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('transactions.index') }}"
+                        class="{{ request()->is('transactions*') ? 'active' : '' }}">
+                        <i class="bi bi-wallet2"></i>
+                        <span>Transaksi</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('promos.index') }}" class="{{ request()->is('promos*') ? 'active' : '' }}">
+                        <i class="bi bi-ticket"></i>
+                        <span>Promo</span>
+                    </a>
+                </li>
+
+
                 <li><a href="#"><i class="bi bi-bar-chart"></i><span>Laporan</span></a></li>
                 <li><a href="#"><i class="bi bi-gear"></i><span>Pengaturan Sistem</span></a></li>
                 <li>
@@ -154,6 +184,10 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -163,11 +197,11 @@
         function logout() {
             if (confirm('Apakah Anda yakin ingin keluar?')) {
                 alert('Logout berhasil! Anda akan diarahkan ke halaman login.');
-                // Di sini bisa ditambahkan logika untuk redirect ke halaman login
+
             }
         }
 
-        // Close sidebar when clicking outside on mobile
+
         document.addEventListener('click', function(event) {
             const sidebar = document.getElementById('sidebar');
             const toggle = document.querySelector('.mobile-toggle');
@@ -216,6 +250,7 @@
             });
         }
     </script>
+
     @stack('scripts')
 </body>
 

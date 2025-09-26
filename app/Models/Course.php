@@ -69,4 +69,9 @@ class Course extends Model
     {
         return $this->hasManyThrough(LessonCompletion::class, Enrollment::class);
     }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

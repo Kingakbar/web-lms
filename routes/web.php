@@ -2,7 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PromoController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\CourseAdminController;
+use App\Http\Controllers\TranscationController;
 use App\Http\Controllers\DashboardAdminController;
 
 Route::get('/', function () {
@@ -33,4 +37,19 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+
+    Route::resource('/categories', CategoryController::class)->parameters([
+        'categories' => 'category:slug'
+    ]);
+
+    Route::resource('/courses', CourseAdminController::class)->parameters([
+        'courses' => 'course:slug'
+    ]);
+
+    Route::resource('/transactions', TranscationController::class)->parameters([
+        'transactions' => 'transaction:id'
+    ]);
+    Route::resource('/promos', PromoController::class)->parameters([
+        'promos' => 'promo:slug'
+    ]);
 });
