@@ -20,7 +20,7 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         // Ringkasan cepat
-        $totalRevenue    = Payment::where('status', 'paid')->sum('amount');
+        $totalRevenue    = Payment::where('status', 'completed')->sum('amount');
         $totalEnrollments = Enrollment::count();
         $totalUsers      = User::count();
         $totalCourses    = Course::count();
@@ -35,7 +35,7 @@ class ReportController extends Controller
             ->get();
 
         // Hitung ringkasan keuangan dari collection payments
-        $financeRevenue = $payments->where('status', 'paid')->sum('amount');
+        $financeRevenue = $payments->where('status', 'completed')->sum('amount');
         $methodStats = $payments->groupBy('method')->map->count()->toArray();
 
         // Bungkus ke satu variabel agar view yang memakai $finance[] tidak error

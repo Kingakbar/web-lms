@@ -60,6 +60,19 @@ class CourseAdminController extends Controller
      */
     public function destroy(Course $course)
     {
+
+        foreach ($course->quizzes as $quiz) {
+
+            $quiz->questions()->delete();
+
+
+            $quiz->attempts()->delete();
+
+
+            $quiz->delete();
+        }
+
+        // Hapus relasi lain
         $course->lessons()->delete();
         $course->reviews()->delete();
         $course->enrollments()->delete();

@@ -1,5 +1,5 @@
 @extends('layouts.dashboard_layout')
-
+@section('title', 'Kelola Materi - Instructor Dashboard')
 @section('content')
     <div class="container-fluid px-4">
         <!-- Header Section -->

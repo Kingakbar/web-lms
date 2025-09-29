@@ -1,5 +1,5 @@
 @extends('layouts.dashboard_layout')
-
+@section('title', 'Tambah Kursus - Technest Academy')
 @section('content')
     <div class="container-fluid px-4">
         <!-- Modern Page Header -->

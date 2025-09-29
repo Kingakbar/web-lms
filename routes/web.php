@@ -1,13 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\CourseAdminController;
 use App\Http\Controllers\TranscationController;
 use App\Http\Controllers\DashboardAdminController;
@@ -39,6 +42,11 @@ Route::middleware(['auth', 'role:instructor'])->group(function () {
     Route::resource('lessons', LessonController::class)->parameters([
         'lessons' => 'lesson:slug'
     ]);
+    Route::resource('quizzes', QuizController::class);
+    Route::get('/enrollments', [EnrollmentController::class, 'index'])
+        ->name('instructor.enrollments.index');
+
+    Route::get('/reviews', [ReviewController::class, 'index'])->name('instructor.reviews.index');
 });
 
 

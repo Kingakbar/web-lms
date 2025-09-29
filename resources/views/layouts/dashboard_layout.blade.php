@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Technest Academy - Dashboard</title>
+    <title>@yield('title', 'Technest Academy - Dashboard')</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css"
         rel="stylesheet">
@@ -37,7 +37,12 @@
                 <li><a href="#"><i class="bi bi-chat-dots"></i><span>Diskusi</span></a></li>
                 <li><a href="#"><i class="bi bi-award"></i><span>Sertifikat</span></a></li>
                 <li><a href="#"><i class="bi bi-graph-up-arrow"></i><span>Progres</span></a></li>
-                <li><a href="#"><i class="bi bi-gear"></i><span>Pengaturan</span></a></li>
+                <li>
+                    <a href="{{ route('settings.page') }}" class="{{ request()->is('settings*') ? 'active' : '' }}">
+                        <i class="bi bi-gear"></i>
+                        <span>Pengaturan</span>
+                    </a>
+                </li>
                 <li>
                     <a href="#" onclick="confirmLogout(event)">
                         <i class="bi bi-box-arrow-right"></i>
@@ -72,10 +77,34 @@
                         <span>Kelola Materi</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('quizzes.index') }}" class="{{ request()->is('quizzes*') ? 'active' : '' }}">
+                        <i class="bi bi-question-circle"></i>
+                        <span>Kelola Quiz</span>
+                    </a>
+                </li>
 
-                <li><a href="#"><i class="bi bi-people"></i><span>Siswa Terdaftar</span></a></li>
-                <li><a href="#"><i class="bi bi-star"></i><span>Review</span></a></li>
-                <li><a href="#"><i class="bi bi-cash-coin"></i><span>Pendapatan</span></a></li>
+
+                <li>
+                    <a href="{{ route('instructor.enrollments.index') }}"
+                        class="{{ request()->routeIs('instructor.enrollments.index') ? 'active' : '' }}">
+                        <i class="bi bi-people"></i>
+                        <span>Siswa Terdaftar</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('instructor.reviews.index') }}"
+                        class="{{ request()->routeIs('instructor.reviews.index') ? 'active' : '' }}">
+                        <i class="bi bi-star"></i>
+                        <span>Review</span>
+                    </a>
+                </li>
+
+
+
+
+
                 <li>
                     <a href="{{ route('settings.page') }}" class="{{ request()->is('settings*') ? 'active' : '' }}">
                         <i class="bi bi-gear"></i>
@@ -231,69 +260,9 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('show');
-        }
-
-        function logout() {
-            if (confirm('Apakah Anda yakin ingin keluar?')) {
-                alert('Logout berhasil! Anda akan diarahkan ke halaman login.');
-
-            }
-        }
-
-
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const toggle = document.querySelector('.mobile-toggle');
-
-            if (window.innerWidth <= 768 &&
-                !sidebar.contains(event.target) &&
-                !toggle.contains(event.target) &&
-                sidebar.classList.contains('show')) {
-                sidebar.classList.remove('show');
-            }
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            const sidebar = document.getElementById('sidebar');
-            if (window.innerWidth > 768) {
-                sidebar.classList.remove('show');
-            }
-        });
-
-        // Add loading animation to cards
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.stats-card, .course-card');
-            cards.forEach((card, index) => {
-                card.style.animationDelay = (index * 0.1) + 's';
-                card.classList.add('fade-in-up');
-            });
-        });
-
-        function confirmLogout(e) {
-            e.preventDefault();
-
-            Swal.fire({
-                title: 'Yakin mau keluar?',
-                text: "Sesi Anda akan diakhiri.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, Logout',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('logout-form').submit();
-                }
-            });
-        }
-    </script>
+    <script src="{{ asset('assets/js/main.js') }}"></script>
 
     @stack('scripts')
 </body>

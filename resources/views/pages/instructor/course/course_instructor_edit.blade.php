@@ -1,5 +1,5 @@
 @extends('layouts.dashboard_layout')
-
+@section('title', 'Edit Kursus - Instructor Dashboard')
 @section('content')
     <div class="container-fluid px-4">
         <!-- Modern Page Header -->

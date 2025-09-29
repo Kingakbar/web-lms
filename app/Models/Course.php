@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Quiz;
 use App\Models\User;
 use App\Models\Lesson;
 use App\Models\Review;
@@ -69,7 +70,15 @@ class Course extends Model
     {
         return $this->hasManyThrough(LessonCompletion::class, Enrollment::class);
     }
+    public function quiz()
+    {
+        return $this->hasOne(Quiz::class);
+    }
 
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
+    }
     public function getRouteKeyName()
     {
         return 'slug';

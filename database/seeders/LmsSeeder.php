@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Quiz;
 use App\Models\User;
 use App\Models\Promo;
 use App\Models\Course;
@@ -10,6 +11,7 @@ use App\Models\Review;
 use App\Models\Payment;
 use App\Models\Category;
 use App\Models\Enrollment;
+use App\Models\QuizQuestion;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -115,14 +117,6 @@ class LmsSeeder extends Seeder
                 'video_url' => 'https://youtu.be/vid2',
                 'order'     => 2,
             ],
-            [
-                'course_id' => $course1->id,
-                'title'     => 'Routing & Controller',
-                'slug'      => 'routing-dan-controller',
-                'content'   => 'Belajar routing, controller, dan struktur dasar MVC di Laravel.',
-                'video_url' => 'https://youtu.be/vid3',
-                'order'     => 3,
-            ],
 
             // Course 2
             [
@@ -132,14 +126,6 @@ class LmsSeeder extends Seeder
                 'content'   => 'Warna, tipografi, dan layout dalam desain UI.',
                 'video_url' => 'https://youtu.be/vid4',
                 'order'     => 1,
-            ],
-            [
-                'course_id' => $course2->id,
-                'title'     => 'User Experience Fundamentals',
-                'slug'      => 'user-experience-fundamentals',
-                'content'   => 'Dasar-dasar pengalaman pengguna dalam desain produk digital.',
-                'video_url' => 'https://youtu.be/vid5',
-                'order'     => 2,
             ],
 
             // Course 3
@@ -153,11 +139,91 @@ class LmsSeeder extends Seeder
             ],
         ]);
 
+        // ===== QUIZZES =====
+        $quiz1 = Quiz::create([
+            'course_id'     => $course1->id,
+            'user_id'       => $instructor1->id, // QUIZ dibuat oleh instruktur course
+            'title'         => 'Quiz Laravel Pemula',
+            'description'   => 'Uji pemahaman dasar tentang Laravel.',
+            'passing_score' => 70,
+        ]);
+
+        QuizQuestion::insert([
+            [
+                'quiz_id' => $quiz1->id,
+                'question' => 'Apa itu Laravel?',
+                'option_a' => 'Framework PHP',
+                'option_b' => 'Framework Java',
+                'option_c' => 'Database',
+                'option_d' => 'Server',
+                'correct_answer' => 'a',
+            ],
+            [
+                'quiz_id' => $quiz1->id,
+                'question' => 'Perintah untuk membuat controller di Laravel?',
+                'option_a' => 'php artisan make:model',
+                'option_b' => 'php artisan make:controller',
+                'option_c' => 'php artisan new:controller',
+                'option_d' => 'php artisan controller:create',
+                'correct_answer' => 'b',
+            ],
+        ]);
+
+        $quiz2 = Quiz::create([
+            'course_id'     => $course2->id,
+            'user_id'       => $instructor2->id, // QUIZ dibuat oleh instruktur course
+            'title'         => 'Quiz UI/UX Dasar',
+            'description'   => 'Tes pengetahuan dasar tentang desain UI/UX.',
+            'passing_score' => 70,
+        ]);
+
+        QuizQuestion::insert([
+            [
+                'quiz_id' => $quiz2->id,
+                'question' => 'Apa itu UI?',
+                'option_a' => 'User Internet',
+                'option_b' => 'User Interface',
+                'option_c' => 'Universal Input',
+                'option_d' => 'Unique Idea',
+                'correct_answer' => 'b',
+            ],
+            [
+                'quiz_id' => $quiz2->id,
+                'question' => 'Prinsip warna dalam UI Design dikenal dengan?',
+                'option_a' => 'Typography',
+                'option_b' => 'Layouting',
+                'option_c' => 'Color Theory',
+                'option_d' => 'Grid System',
+                'correct_answer' => 'c',
+            ],
+        ]);
+
+        // kalau admin bikin quiz untuk course3
+        $quiz3 = Quiz::create([
+            'course_id'     => $course3->id,
+            'user_id'       => $admin->id, // QUIZ dibuat oleh admin
+            'title'         => 'Quiz Digital Business',
+            'description'   => 'Tes strategi bisnis digital.',
+            'passing_score' => 75,
+        ]);
+
+        QuizQuestion::insert([
+            [
+                'quiz_id' => $quiz3->id,
+                'question' => 'Apa tujuan utama bisnis digital?',
+                'option_a' => 'Menjual produk secara offline',
+                'option_b' => 'Menggunakan teknologi untuk menciptakan nilai',
+                'option_c' => 'Menghindari internet',
+                'option_d' => 'Menambah biaya operasional',
+                'correct_answer' => 'b',
+            ],
+        ]);
+
         // ===== ENROLLMENTS + PAYMENTS + REVIEWS =====
         $enroll1 = Enrollment::create([
             'user_id'    => $student1->id,
             'course_id'  => $course1->id,
-            'enrolled_at'=> now(),
+            'enrolled_at' => now(),
         ]);
         Payment::create([
             'enrollment_id' => $enroll1->id,
@@ -166,17 +232,11 @@ class LmsSeeder extends Seeder
             'status'        => 'completed',
             'paid_at'       => now(),
         ]);
-        Review::create([
-            'user_id'   => $student1->id,
-            'course_id' => $course1->id,
-            'rating'    => 5,
-            'comment'   => 'Kursusnya sangat membantu, materi mudah dipahami!',
-        ]);
 
         $enroll2 = Enrollment::create([
             'user_id'    => $student2->id,
             'course_id'  => $course2->id,
-            'enrolled_at'=> now(),
+            'enrolled_at' => now(),
         ]);
         Payment::create([
             'enrollment_id' => $enroll2->id,
@@ -185,17 +245,11 @@ class LmsSeeder extends Seeder
             'status'        => 'completed',
             'paid_at'       => now(),
         ]);
-        Review::create([
-            'user_id'   => $student2->id,
-            'course_id' => $course2->id,
-            'rating'    => 4,
-            'comment'   => 'Materi bagus, tapi sebaiknya ada lebih banyak contoh studi kasus.',
-        ]);
 
         $enroll3 = Enrollment::create([
             'user_id'    => $student3->id,
             'course_id'  => $course3->id,
-            'enrolled_at'=> now(),
+            'enrolled_at' => now(),
         ]);
         Payment::create([
             'enrollment_id' => $enroll3->id,
@@ -211,7 +265,6 @@ class LmsSeeder extends Seeder
                 'slug'                => 'diskon-awal-tahun',
                 'code'                => 'NEWYEAR25',
                 'discount_percentage' => 25,
-                'discount_amount'     => null,
                 'start_date'          => now()->subWeek(),
                 'end_date'            => now()->addWeeks(2),
             ],
@@ -220,7 +273,6 @@ class LmsSeeder extends Seeder
                 'slug'                => 'promo-kemerdekaan',
                 'code'                => 'MERDEKA45',
                 'discount_percentage' => 45,
-                'discount_amount'     => null,
                 'start_date'          => now()->subDays(10),
                 'end_date'            => now()->addDays(20),
             ],
