@@ -9,6 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css"
         rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/progress.css') }}">
     <link rel="shortcut icon" href="{{ asset('assets/img/logo.png') }}" type="image/x-icon">
     {{-- DataTables CSS --}}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
@@ -31,12 +32,35 @@
         <ul class="sidebar-menu">
             {{-- ================= STUDENT ================= --}}
             @role('student')
-                <li><a href=""><i class="bi bi-house"></i><span>Dashboard</span></a></li>
-                <li><a href=""><i class="bi bi-book"></i><span>Kursus Saya</span></a></li>
-                <li><a href="#"><i class="bi bi-calendar"></i><span>Jadwal</span></a></li>
-                <li><a href="#"><i class="bi bi-chat-dots"></i><span>Diskusi</span></a></li>
-                <li><a href="#"><i class="bi bi-award"></i><span>Sertifikat</span></a></li>
-                <li><a href="#"><i class="bi bi-graph-up-arrow"></i><span>Progres</span></a></li>
+                <li>
+                    <a href="{{ route('dashboard.student') }}" class="{{ request()->is('dashboard*') ? 'active' : '' }}">
+                        <i class="bi bi-house"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('courses_student.index') }}"
+                        class="{{ request()->is('courses_student*') ? 'active' : '' }}">
+                        <i class="bi bi-journal"></i>
+                        <span>Kursus Saya</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('progress.index') }}" class="{{ request()->is('progress*') ? 'active' : '' }}">
+                        <i class="bi bi-graph-up-arrow"></i>
+                        <span>Progres</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('certificates.index') }}"
+                        class="{{ request()->is('certificates*') ? 'active' : '' }}">
+                        <i class="bi bi-award"></i>
+                        <span>Sertifikat</span>
+                    </a>
+                </li>
+
                 <li>
                     <a href="{{ route('settings.page') }}" class="{{ request()->is('settings*') ? 'active' : '' }}">
                         <i class="bi bi-gear"></i>
@@ -58,7 +82,8 @@
             {{-- ================= INSTRUCTOR ================= --}}
             @role('instructor')
                 <li>
-                    <a href="{{ route('dashboard.instructor') }}" class="{{ request()->is('dashboard*') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard.instructor') }}"
+                        class="{{ request()->is('dashboard*') ? 'active' : '' }}">
                         <i class="bi bi-house"></i>
                         <span>Dashboard</span>
                     </a>

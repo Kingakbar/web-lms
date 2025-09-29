@@ -12,7 +12,7 @@ class DashboardStudentController extends Controller
      */
     public function index()
     {
-        //
+        return view('pages.dashboard.dashboard_student');
     }
 
     /**

@@ -9,11 +9,15 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CourseAdminController;
 use App\Http\Controllers\TranscationController;
+use App\Http\Controllers\CourseStudentController;
 use App\Http\Controllers\DashboardAdminController;
+use App\Http\Controllers\DashboardStudentController;
 use App\Http\Controllers\CourseInsctructorController;
 use App\Http\Controllers\DashboardInstructorController;
 
@@ -31,7 +35,23 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 Route::middleware(['auth', 'role:student'])->group(function () {
-    Route::get('/dashboard/student', fn() => view('pages.dashboard.dashboard_student'))->name('dashboard.student');
+    Route::get('/dashboard/student', [DashboardStudentController::class, 'index'])->name('dashboard.student');
+    Route::resource('/courses_student', CourseStudentController::class)->parameters([
+        'courses' => 'course:slug'
+    ]);
+    Route::get('/learn/{course:slug}/lesson/{lesson:slug}', [CourseStudentController::class, 'lesson'])->name('learn.lesson');
+    Route::post('/learn/{course}/{lesson}/complete', [CourseStudentController::class, 'completeLesson'])
+        ->name('learn.lesson.complete');
+
+    Route::get('/learn/{course}/quiz/{quiz}', [CourseStudentController::class, 'quiz'])->name('learn.quiz');
+    Route::post('/learn/{course}/quiz/{quiz}/submit', [CourseStudentController::class, 'submitQuiz'])->name('learn.quiz.submit');
+    Route::get('/progress', [ProgressController::class, 'index'])->name('progress.index');
+    Route::get('/certificates', [CertificateController::class, 'index'])
+        ->name('certificates.index');
+
+    // Generate & download sertifikat
+    Route::get('/certificates/{enrollmentId}/generate', [CertificateController::class, 'generate'])
+        ->name('certificates.generate');
 });
 
 Route::middleware(['auth', 'role:instructor'])->group(function () {
