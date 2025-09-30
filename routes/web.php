@@ -13,6 +13,7 @@ use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\ClientSideController;
 use App\Http\Controllers\CourseAdminController;
 use App\Http\Controllers\TranscationController;
 use App\Http\Controllers\CourseStudentController;
@@ -21,10 +22,8 @@ use App\Http\Controllers\DashboardStudentController;
 use App\Http\Controllers\CourseInsctructorController;
 use App\Http\Controllers\DashboardInstructorController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
+Route::get('/', [ClientSideController::class, 'index'])->name('home');
 
 
 Route::get('/login', fn() => view('pages.auth.login_page'))->name('login');

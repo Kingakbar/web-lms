@@ -2736,3 +2736,70 @@
                 grid-template-columns: 1fr;
             }
         }
+
+
+        /* Additional custom styles specific to certificate page */
+        .course-card-modern {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .course-card-modern:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .badge-completed {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        .progress-fill-modern {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill-modern::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .mini-stat-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .mini-stat-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .mini-stat-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }

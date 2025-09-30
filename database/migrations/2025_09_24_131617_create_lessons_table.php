@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('slug')->unique(); // SEO friendly
             $table->text('content')->nullable();
             $table->string('video_url')->nullable();
+            $table->integer('duration')->default(0); // durasi dalam menit
             $table->integer('order')->default(0);
             $table->timestamps();
         });

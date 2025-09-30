@@ -10,16 +10,21 @@
         rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/css/login.css') }}">
     <link rel="shortcut icon" href="{{ asset('assets/img/logo.png') }}" type="image/x-icon">
+
+
 </head>
 
 <body>
+    <!-- Alert Container -->
     <div class="login-container">
         <div class="login-card">
             <div class="row g-0 login-row">
                 <div class="col-lg-6">
                     <div class="login-form-section">
                         <div class="logo-section">
-                            <img src="{{ asset('assets/img/logo.png') }}" alt="" srcset="" width="80">
+                            <a href="{{ route('home') }}">
+                                <img src="{{ asset('assets/img/logo.png') }}" alt="Logo" width="80">
+                            </a>
                             <div class="logo-text">Technest Academy</div>
                             <div class="logo-subtitle">Platform Belajar Online Terdepan</div>
                         </div>
@@ -28,6 +33,9 @@
                             <h2>Selamat Datang Kembali!</h2>
                             <p>Masuk ke akun Anda untuk melanjutkan perjalanan belajar</p>
                         </div>
+
+                        <!-- Alert Container di sini -->
+                        <div class="alert-container" id="alertContainer"></div>
 
                         <form id="loginForm" method="POST" action="{{ route('login.post') }}">
                             @csrf
@@ -80,7 +88,6 @@
                     </div>
                 </div>
 
-
                 <div class="col-lg-6 d-none d-lg-block">
                     <div class="login-illustration">
                         <div class="illustration-content">
@@ -118,6 +125,56 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Modern Alert Function
+        function showAlert(type, title, message) {
+            const alertContainer = document.getElementById('alertContainer');
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `modern-alert alert-${type}`;
+
+            const icon = type === 'error' ? 'bi-x-circle-fill' : 'bi-check-circle-fill';
+
+            alertDiv.innerHTML = `
+                <div class="alert-icon">
+                    <i class="bi ${icon}"></i>
+                </div>
+                <div class="alert-content">
+                    <div class="alert-title">${title}</div>
+                    <p class="alert-message">${message}</p>
+                </div>
+                <button class="alert-close" onclick="closeAlert(this)">
+                    <i class="bi bi-x"></i>
+                </button>
+            `;
+
+            alertContainer.appendChild(alertDiv);
+
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                closeAlert(alertDiv.querySelector('.alert-close'));
+            }, 5000);
+        }
+
+        function closeAlert(button) {
+            const alert = button.closest('.modern-alert');
+            alert.classList.add('hiding');
+            setTimeout(() => {
+                alert.remove();
+            }, 300);
+        }
+
+        // Show Laravel validation errors
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                showAlert('error', 'Login Gagal', '{{ $error }}');
+            @endforeach
+        @endif
+
+        // Show success message
+        @if (session('success'))
+            showAlert('success', 'Berhasil!', '{{ session('success') }}');
+        @endif
+
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const toggleIcon = document.getElementById('passwordToggleIcon');
@@ -133,7 +190,6 @@
             }
         }
 
-
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -144,22 +200,26 @@
             const loadingSpinner = document.getElementById('loadingSpinner');
             let isValid = true;
 
-
+            // Reset validation
             email.classList.remove('is-invalid');
             password.classList.remove('is-invalid');
             document.getElementById('emailError').style.display = 'none';
             document.getElementById('passwordError').style.display = 'none';
 
+            // Validate email
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email.value)) {
                 email.classList.add('is-invalid');
                 document.getElementById('emailError').style.display = 'block';
+                showAlert('error', 'Email Tidak Valid', 'Mohon masukkan format email yang benar.');
                 isValid = false;
             }
 
+            // Validate password
             if (password.value.length < 6) {
                 password.classList.add('is-invalid');
                 document.getElementById('passwordError').style.display = 'block';
+                showAlert('error', 'Password Terlalu Pendek', 'Password minimal harus 6 karakter.');
                 isValid = false;
             }
 

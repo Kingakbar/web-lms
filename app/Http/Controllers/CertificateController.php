@@ -19,27 +19,49 @@ class CertificateController extends Controller
     {
         $user = Auth::user();
 
-        // Ambil enrollment user
-        $enrollments = Enrollment::with(['course.lessons', 'lessonCompletions'])
+        // Eager load relasi yang dibutuhkan
+        $enrollments = Enrollment::with([
+            'course.lessons',
+            'course.instructor',
+            'lessonCompletions', // completions untuk enrollment ini
+            'certificate'
+        ])
             ->where('user_id', $user->id)
             ->get();
 
-        // Cek mana yang sudah selesai 100%
+        // Map tiap enrollment menjadi data yang siap ditampilkan
         $data = $enrollments->map(function ($enrollment) {
-            $totalLessons = $enrollment->course->lessons->count();
-            $completed = $enrollment->lessonCompletions->where('is_completed', true)->count();
+            $course = $enrollment->course;
 
-            $isCompleted = $totalLessons > 0 && $completed === $totalLessons;
+            // total lesson pada course (0 kalau course null)
+            $totalLessons = $course ? $course->lessons->count() : 0;
+
+            // completed lessons: hitung unique lesson_id yang berstatus completed
+            $completedLessons = $enrollment->lessonCompletions
+                ->where('is_completed', true)
+                ->pluck('lesson_id')
+                ->filter()   // buang null
+                ->unique()
+                ->count();
+
+            $progress = $totalLessons > 0 ? (int) round(($completedLessons / $totalLessons) * 100) : 0;
+
+            // sisipkan statistik ke object enrollment supaya blade bisa akses dengan mudah
+            $enrollment->completed_lessons = $completedLessons;
+            $enrollment->lessons_count = $totalLessons;
 
             return [
-                'enrollment' => $enrollment,
-                'isCompleted' => $isCompleted,
+                'enrollment'  => $enrollment,
+                'progress'    => $progress,
+                'isCompleted' => $progress === 100,
                 'certificate' => $enrollment->certificate,
             ];
         });
 
         return view('pages.student.sertifikat.sertifikat_page', compact('data'));
     }
+
+
 
     public function generate($enrollmentId)
     {

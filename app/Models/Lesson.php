@@ -13,7 +13,8 @@ class Lesson extends Model
         'slug',
         'content',
         'video_url',
-        'order'
+        'order',
+        'duration'
     ];
 
     public function course()

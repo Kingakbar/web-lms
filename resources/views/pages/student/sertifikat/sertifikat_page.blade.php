@@ -10,8 +10,6 @@
             </div>
         </div>
 
-
-
         @if ($data->isEmpty())
             <!-- Empty State -->
             <div class="empty-state-card">
@@ -20,7 +18,7 @@
                 </div>
                 <h3 class="empty-state-title">Belum Ada Sertifikat</h3>
                 <p class="empty-state-text">
-                    Anda belum mengikuti kursus apapun. Mulai belajar sekarang untuk mendapatkan sertifikat!
+                    Anda belum menyelesaikan kursus apapun. Mulai belajar sekarang untuk mendapatkan sertifikat!
                 </p>
                 <a href="{{ route('courses.index') }}" class="btn-modern btn-primary-modern mt-3">
                     <i class="fas fa-search me-2"></i>Jelajahi Kursus
@@ -30,13 +28,18 @@
             <!-- Certificates Grid -->
             <div class="row">
                 @foreach ($data as $item)
+                    @php
+                        $en = $item['enrollment'];
+                        $course = $en->course;
+                    @endphp
+
                     <div class="col-lg-6 col-xl-4 mb-4">
                         <div class="course-card-modern">
                             <!-- Certificate Header -->
                             <div class="course-thumbnail">
-                                @if ($item['enrollment']->course->thumbnail)
-                                    <img src="{{ Storage::url($item['enrollment']->course->thumbnail) }}"
-                                        alt="{{ $item['enrollment']->course->title }}" class="img-fluid">
+                                @if (!empty($course) && $course->thumbnail)
+                                    <img src="{{ Storage::url($course->thumbnail) }}" alt="{{ $course->title }}"
+                                        class="img-fluid">
                                 @else
                                     <div class="course-thumbnail-placeholder">
                                         <i class="fas fa-book-open"></i>
@@ -56,23 +59,23 @@
                             <!-- Certificate Body -->
                             <div class="course-card-body">
                                 <!-- Course Title -->
-                                <h5 class="course-card-title">{{ $item['enrollment']->course->title }}</h5>
+                                <h5 class="course-card-title">{{ $course->title ?? '-' }}</h5>
 
                                 <!-- Course Meta -->
                                 <div class="course-meta mb-3">
                                     <div class="meta-item">
                                         <i class="fas fa-user"></i>
-                                        <span>{{ $item['enrollment']->course->instructor->name ?? 'Instruktur' }}</span>
+                                        <span>{{ optional($course->instructor)->name ?? 'Instruktur' }}</span>
                                     </div>
                                     <div class="meta-item">
                                         <i class="fas fa-calendar"></i>
-                                        <span>{{ $item['enrollment']->created_at->format('d M Y') }}</span>
+                                        <span>{{ $en->created_at ? $en->created_at->format('d M Y') : '-' }}</span>
                                     </div>
                                 </div>
 
                                 <!-- Course Description -->
                                 <p class="course-card-description">
-                                    {{ Str::limit($item['enrollment']->course->description, 100) }}
+                                    {{ Str::limit($course->description ?? '-', 100) }}
                                 </p>
 
                                 @if (!$item['isCompleted'])
@@ -81,16 +84,18 @@
                                         <div class="d-flex justify-content-between align-items-center mb-2">
                                             <span class="progress-label">Progress Kursus</span>
                                             <span class="progress-percentage">
-                                                {{ $item['enrollment']->progress_percentage ?? 0 }}%
+                                                {{ $item['progress'] }}%
                                             </span>
                                         </div>
-                                        <div class="progress-bar-modern">
+                                        <div class="progress-bar-modern"
+                                            style="background:#eee;border-radius:8px;overflow:hidden;height:10px;">
                                             <div class="progress-fill-modern"
-                                                style="width: {{ $item['enrollment']->progress_percentage ?? 0 }}%"></div>
+                                                style="width: {{ $item['progress'] }}%; height:100%; background: linear-gradient(90deg,#60a5fa,#4f46e5);">
+                                            </div>
                                         </div>
-                                        <p class="progress-text">
-                                            {{ $item['enrollment']->completed_lessons ?? 0 }} dari
-                                            {{ $item['enrollment']->course->lessons_count ?? 0 }} pelajaran selesai
+                                        <p class="progress-text mt-2 small text-muted">
+                                            {{ $en->completed_lessons ?? 0 }} dari
+                                            {{ $en->lessons_count ?? 0 }} pelajaran selesai
                                         </p>
                                     </div>
                                 @else
@@ -108,14 +113,14 @@
 
                                 <!-- Action Button -->
                                 @if ($item['isCompleted'])
-                                    <a href="{{ route('certificates.generate', $item['enrollment']->id) }}"
-                                        class="btn-continue">
+                                    <a href="{{ route('certificates.generate', $en->id) }}" class="btn-continue">
                                         <i class="fas fa-download me-2"></i>
                                         Unduh Sertifikat
                                     </a>
                                 @else
-                                    <a href="{{ route('courses_student.index', $item['enrollment']->course->id) }}"
-                                        class="btn-continue" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                                    <!-- Jika route courses_student.index tidak ada, ganti sesuai route project -->
+                                    <a href="{{ route('courses_student.index') }}" class="btn-continue"
+                                        style="background: linear-gradient(135deg, #f59e0b, #d97706);">
                                         <i class="fas fa-play me-2"></i>
                                         Selesaikan Kursus
                                     </a>
@@ -131,135 +136,29 @@
 
 @push('scripts')
     <script>
-        // Add some interactive effects
         document.addEventListener('DOMContentLoaded', function() {
-            // Animate cards on scroll
+            // Simple animations for cards
             const cards = document.querySelectorAll('.course-card-modern');
-
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '0';
-                        entry.target.style.transform = 'translateY(20px)';
-                        entry.target.style.transition = 'all 0.6s ease';
-
-                        setTimeout(() => {
-                            entry.target.style.opacity = '1';
-                            entry.target.style.transform = 'translateY(0)';
-                        }, 100);
-
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-
-            cards.forEach(card => {
-                observer.observe(card);
+            cards.forEach((card, i) => {
+                card.style.opacity = 0;
+                card.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 450ms ease';
+                    card.style.opacity = 1;
+                    card.style.transform = 'translateY(0)';
+                }, 80 * i);
             });
 
-            // Add click effect to certificate download buttons
-            const downloadButtons = document.querySelectorAll('a[href*="certificates.generate"]');
-            downloadButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    // Add loading state
-                    const originalText = this.innerHTML;
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Memproses...';
-                    this.style.pointerEvents = 'none';
-
-                    // Reset after 2 seconds (adjust based on your needs)
-                    setTimeout(() => {
-                        this.innerHTML = originalText;
-                        this.style.pointerEvents = 'auto';
-                    }, 2000);
-                });
-            });
-
-            // Add hover effect to progress bars
+            // Progress hover glow
             const progressBars = document.querySelectorAll('.progress-fill-modern');
             progressBars.forEach(bar => {
-                bar.addEventListener('mouseenter', function() {
-                    this.style.boxShadow = '0 0 10px rgba(99, 102, 241, 0.5)';
+                bar.addEventListener('mouseenter', () => {
+                    bar.style.boxShadow = '0 6px 20px rgba(79,70,229,0.18)';
                 });
-
-                bar.addEventListener('mouseleave', function() {
-                    this.style.boxShadow = 'none';
+                bar.addEventListener('mouseleave', () => {
+                    bar.style.boxShadow = 'none';
                 });
             });
         });
     </script>
-@endpush
-
-@push('styles')
-    <style>
-        /* Additional custom styles specific to certificate page */
-        .course-card-modern {
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .course-card-modern:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .badge-completed {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-            }
-
-            70% {
-                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-            }
-        }
-
-        .progress-fill-modern {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress-fill-modern::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% {
-                left: -100%;
-            }
-
-            100% {
-                left: 100%;
-            }
-        }
-
-        .mini-stat-card:nth-child(1) {
-            animation-delay: 0.1s;
-        }
-
-        .mini-stat-card:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .mini-stat-card:nth-child(3) {
-            animation-delay: 0.3s;
-        }
-    </style>
 @endpush
