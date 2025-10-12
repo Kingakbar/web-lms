@@ -8,8 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css"
         rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/progress.css') }}">
+    @vite(['resources/css/dashboard.css', 'resources/css/progress.css'])
     <link rel="shortcut icon" href="{{ asset('assets/img/logo.png') }}" type="image/x-icon">
     {{-- DataTables CSS --}}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
@@ -23,11 +22,12 @@
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="d-flex align-items-center">
-
-                <img src="{{ asset('assets/img/logo.png') }}" alt="" srcset="" width="50">
-
-                <h4>Technest Academy</h4>
+                <a href="{{ route('home') }}" class="d-flex align-items-center text-decoration-none text-dark">
+                    <img src="{{ asset('assets/img/logo.png') }}" alt="Logo" width="50" class="me-2">
+                    <h4 class="mb-0">Technest Academy</h4>
+                </a>
             </div>
+
         </div>
         <ul class="sidebar-menu">
             {{-- ================= STUDENT ================= --}}

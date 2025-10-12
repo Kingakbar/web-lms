@@ -2,198 +2,410 @@
 <html>
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Certificate</title>
+    <meta charset="utf-8">
+    <title>Certificate of Completion</title>
     <style>
         @page {
-            margin: 15mm;
+            size: A4 landscape;
+            margin: 0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Times New Roman', serif;
+            font-family: 'Arial', 'Helvetica', sans-serif;
             margin: 0;
             padding: 0;
+            background: white;
         }
 
-        .certificate {
-            border: 8px solid #d4af37;
-            padding: 30px;
-            text-align: center;
+        .page-wrapper {
+            width: 297mm;
+            height: 210mm;
             position: relative;
-            min-height: 500px;
+            background: white;
         }
 
-        .inner-border {
-            border: 2px solid #d4af37;
-            padding: 40px 30px;
-            min-height: 480px;
+        /* Decorative borders */
+        .border-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 15mm;
+            background: #1e3a5f;
+        }
+
+        .border-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 15mm;
+            background: #1e3a5f;
+        }
+
+        .border-left {
+            position: absolute;
+            top: 15mm;
+            left: 0;
+            bottom: 15mm;
+            width: 15mm;
+            background: #1e3a5f;
+        }
+
+        .border-right {
+            position: absolute;
+            top: 15mm;
+            right: 0;
+            bottom: 15mm;
+            width: 15mm;
+            background: #17a2b8;
+        }
+
+        /* Corner accents */
+        .corner-accent {
+            position: absolute;
+            width: 30mm;
+            height: 30mm;
+            background: #17a2b8;
+        }
+
+        .corner-top-left {
+            top: 0;
+            left: 0;
+        }
+
+        .corner-bottom-right {
+            bottom: 0;
+            right: 0;
+        }
+
+        /* Main content area */
+        .certificate-container {
+            position: absolute;
+            top: 15mm;
+            left: 15mm;
+            right: 15mm;
+            bottom: 15mm;
+            background: white;
+            padding: 30px 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-container {
+            margin-bottom: 10px;
         }
 
         .logo {
-            width: 45px;
-            height: 45px;
-            margin: 0 auto 12px auto;
-            border-radius: 50%;
-            border: 2px solid #d4af37;
-            padding: 4px;
+            height: 50px;
+            width: auto;
+            max-width: 180px;
         }
 
-        .title {
-            font-size: 28px;
-            color: #2e7d32;
-            font-weight: bold;
-            margin: 12px 0 8px 0;
-            letter-spacing: 2px;
+        .logo-text {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1e3a5f;
+            letter-spacing: -0.5px;
         }
 
-        .subtitle {
-            font-size: 13px;
-            color: #666;
-            font-style: italic;
-            margin: 10px 0;
+        .logo-accent {
+            color: #17a2b8;
         }
 
-        .name {
-            font-size: 26px;
-            font-weight: bold;
-            color: #000;
-            margin: 15px 0;
-            padding-bottom: 6px;
-            border-bottom: 3px double #d4af37;
+        .certificate-title {
+            text-align: center;
+            margin: 20px 0 5px 0;
+        }
+
+        .certificate-title h1 {
+            font-size: 42px;
+            font-weight: 900;
+            color: #1e3a5f;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
             display: inline-block;
         }
 
-        .body-text {
-            font-size: 14px;
-            color: #333;
-            margin: 15px 0;
-            line-height: 1.6;
-        }
-
-        .course-name {
-            font-size: 17px;
-            color: #2e7d32;
-            font-weight: bold;
-            font-style: italic;
-            margin: 10px 0;
-        }
-
-        .footer {
-            margin-top: 30px;
-            width: 100%;
-        }
-
-        .footer table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .footer td {
-            width: 33.33%;
-            text-align: center;
-            vertical-align: top;
-            padding: 5px;
-        }
-
-        .signature-line {
-            width: 100px;
-            border-top: 1px solid #000;
-            margin: 0 auto 4px auto;
-        }
-
-        .signature-img {
-            height: 35px;
-            margin-bottom: 4px;
-        }
-
-        .footer-name {
-            font-size: 12px;
-            font-weight: bold;
-            margin: 4px 0 2px 0;
-        }
-
-        .footer-title {
-            font-size: 10px;
-            color: #666;
-            font-style: italic;
+        .title-underline {
+            width: 200px;
+            height: 4px;
+            background: #ffd700;
+            margin: 0 auto;
         }
 
         .cert-number {
-            font-size: 8px;
-            color: #999;
-            margin-top: 20px;
+            text-align: center;
+            font-size: 9px;
+            color: #666;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
         }
 
-        .seal {
-            position: absolute;
-            bottom: 50px;
-            right: 30px;
-            width: 50px;
+        .content {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .certify-text {
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .recipient-name {
+            font-size: 30px;
+            font-weight: 700;
+            color: #1e3a5f;
+            margin: 15px 0;
+            padding-bottom: 5px;
+            border-bottom: 2px dashed #17a2b8;
+            display: inline-block;
+        }
+
+        .participation-text {
+            font-size: 12px;
+            color: #333;
+            margin: 15px 0 10px 0;
+        }
+
+        .course-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e3a5f;
+            margin: 10px 0 15px 0;
+            line-height: 1.3;
+        }
+
+        .course-date {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .footer {
+            margin-top: 35px;
+            display: table;
+            width: 100%;
+        }
+
+        .footer-left,
+        .footer-right {
+            display: table-cell;
+            vertical-align: bottom;
+        }
+
+        .footer-left {
+            width: 60%;
+            text-align: center;
+        }
+
+        .footer-right {
+            width: 40%;
+            text-align: center;
+        }
+
+        .location-date {
+            font-size: 11px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .signature-line {
+            width: 130px;
             height: 50px;
-            border: 2px solid #d4af37;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .signature-image {
+            max-width: 120px;
+            max-height: 45px;
+            height: auto;
+        }
+
+        .signature-placeholder {
+            width: 120px;
+            height: 1px;
+            background: #333;
+            margin: 25px auto 5px auto;
+        }
+
+        .signature-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1e3a5f;
+            margin-top: 5px;
+        }
+
+        .signature-title {
+            font-size: 9px;
+            color: #666;
+        }
+
+        .qr-section {
+            display: inline-block;
+        }
+
+        .qr-code {
+            width: 70px;
+            height: 70px;
+            border: 2px solid #1e3a5f;
+            margin: 0 auto 5px auto;
+            background: #f5f5f5;
+        }
+
+        .qr-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            color: #666;
+            text-align: center;
+            padding: 5px;
+        }
+
+        .qr-logo {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e3a5f;
+        }
+
+        .qr-logo-accent {
+            color: #17a2b8;
+        }
+
+        .verification-link {
+            position: absolute;
+            bottom: 20px;
+            left: 40px;
+            font-size: 7px;
+            color: #17a2b8;
+        }
+
+        /* Decorative elements */
+        .deco-circle {
+            position: absolute;
             border-radius: 50%;
-            background: #d4af37;
-            color: white;
-            font-size: 6px;
-            font-weight: bold;
-            line-height: 1.2;
-            padding: 16px 4px;
+            opacity: 0.1;
+        }
+
+        .deco-circle-1 {
+            width: 150px;
+            height: 150px;
+            background: #17a2b8;
+            top: 30px;
+            right: 50px;
+        }
+
+        .deco-circle-2 {
+            width: 120px;
+            height: 120px;
+            background: #1e3a5f;
+            bottom: 40px;
+            left: 60px;
         }
     </style>
 </head>
 
 <body>
-    <div class="certificate">
-        <div class="inner-border">
-            @if (!empty($logoBase64))
-                <img src="{{ $logoBase64 }}" class="logo" alt="Logo">
-            @endif
+    <div class="page-wrapper">
+        <!-- Borders -->
+        <div class="corner-accent corner-top-left"></div>
+        <div class="corner-accent corner-bottom-right"></div>
+        <div class="border-top"></div>
+        <div class="border-bottom"></div>
+        <div class="border-left"></div>
+        <div class="border-right"></div>
 
-            <div class="title">CERTIFICATE OF COMPLETION</div>
+        <!-- Main Content -->
+        <div class="certificate-container">
+            <!-- Decorative circles -->
+            <div class="deco-circle deco-circle-1"></div>
+            <div class="deco-circle deco-circle-2"></div>
 
-            <div class="subtitle">This is to certify that</div>
-
-            <div class="name">{{ $user->name }}</div>
-
-            <div class="body-text">
-                Has successfully completed the course
-                <div class="course-name">"{{ $course->title }}"</div>
-                with dedication and commitment to excellence.
+            <div class="header">
+                @if (!empty($logoBase64))
+                    <div class="logo-container">
+                        <img src="{{ $logoBase64 }}" class="logo" alt="TechnestAcademy Logo">
+                    </div>
+                @else
+                    <div class="logo-text">
+                        Technest<span class="logo-accent">Academy</span>
+                    </div>
+                @endif
             </div>
 
-            <div class="footer">
-                <table>
-                    <tr>
-                        <td>
-                            <div class="signature-line"></div>
-                            <div class="footer-name">{{ $course->instructor->name ?? 'Instructor' }}</div>
-                            <div class="footer-title">Course Instructor</div>
-                        </td>
-                        <td>
-                            @if (!empty($signatureBase64))
-                                <img src="{{ $signatureBase64 }}" class="signature-img" alt="Signature">
-                            @else
-                                <div class="signature-line"></div>
-                            @endif
-                            <div class="footer-name">Academic Administrator</div>
-                            <div class="footer-title">Authorized Signatory</div>
-                        </td>
-                        <td>
-                            <div class="signature-line"></div>
-                            <div class="footer-name">{{ $certificate->issued_at->format('d M Y') }}</div>
-                            <div class="footer-title">Date of Issue</div>
-                        </td>
-                    </tr>
-                </table>
+            <div class="certificate-title">
+                <h1>CERTIFICATE</h1>
             </div>
+            <div class="title-underline"></div>
 
             <div class="cert-number">
                 Certificate No: {{ $certificate->certificate_number }}
             </div>
 
-            <div class="seal">
-                OFFICIAL<br>SEAL
+            <div class="content">
+                <div class="certify-text">
+                    This is to certify that
+                </div>
+
+                <div class="recipient-name">
+                    {{ $user->name }}
+                </div>
+
+                <div class="participation-text">
+                    has successfully completed the course
+                </div>
+
+                <div class="course-name">
+                    {{ $course->title }}
+                </div>
+
+                <div class="course-date">
+                    Issued on {{ $certificate->issued_at->format('F d, Y') }} by TechnestAcademy
+                </div>
             </div>
+
+            <div class="footer">
+                <div class="footer-left">
+                    <div class="location-date">
+                        Medan, {{ $certificate->issued_at->format('F Y') }}
+                    </div>
+                    @if (!empty($signatureBase64))
+                        <div class="signature-line">
+                            <img src="{{ $signatureBase64 }}" class="signature-image" alt="Signature">
+                        </div>
+                    @else
+                        <div class="signature-placeholder"></div>
+                    @endif
+                    <div class="signature-name">Wahyu Riansyah, S.Kom., M.Kom.</div>
+                    <div class="signature-title">CEO JALINTEK</div>
+                </div>
+
+                <div class="footer-right">
+
+
+                    <div class="qr-logo">
+                        Technest<span class="qr-logo-accent">Academy</span>
+                    </div>
+
+                </div>
+            </div>
+
+
         </div>
     </div>
 </body>

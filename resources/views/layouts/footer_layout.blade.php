@@ -114,3 +114,19 @@
         </div>
     </div>
 </footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+@vite(['resources/js/app.js'])
+<script>
+    lottie.loadAnimation({
+        container: document.getElementById('lottie-businessman'),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: '{{ asset('assets/img/Businessman.json') }}'
+    });
+</script>
+</body>
+
+</html>

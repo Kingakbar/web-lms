@@ -19,34 +19,40 @@ class CertificateController extends Controller
     {
         $user = Auth::user();
 
-        // Eager load relasi yang dibutuhkan
+        // Eager load relasi + filter hanya pembayaran yang sudah tidak pending
         $enrollments = Enrollment::with([
             'course.lessons',
             'course.instructor',
-            'lessonCompletions', // completions untuk enrollment ini
-            'certificate'
+            'lessonCompletions',
+            'certificate',
+            'payments',
         ])
             ->where('user_id', $user->id)
+            ->whereHas('payments', function ($q) {
+                $q->where('status', '!=', 'pending');
+            })
             ->get();
 
-        // Map tiap enrollment menjadi data yang siap ditampilkan
+        // Map tiap enrollment menjadi data siap ditampilkan di Blade
         $data = $enrollments->map(function ($enrollment) {
             $course = $enrollment->course;
 
-            // total lesson pada course (0 kalau course null)
+            // Total lesson di course
             $totalLessons = $course ? $course->lessons->count() : 0;
 
-            // completed lessons: hitung unique lesson_id yang berstatus completed
+            // Hitung jumlah lesson yang sudah selesai (unique)
             $completedLessons = $enrollment->lessonCompletions
                 ->where('is_completed', true)
                 ->pluck('lesson_id')
-                ->filter()   // buang null
+                ->filter() // buang null
                 ->unique()
                 ->count();
 
-            $progress = $totalLessons > 0 ? (int) round(($completedLessons / $totalLessons) * 100) : 0;
+            $progress = $totalLessons > 0
+                ? (int) round(($completedLessons / $totalLessons) * 100)
+                : 0;
 
-            // sisipkan statistik ke object enrollment supaya blade bisa akses dengan mudah
+            // Sisipkan statistik agar bisa diakses dari Blade
             $enrollment->completed_lessons = $completedLessons;
             $enrollment->lessons_count = $totalLessons;
 
@@ -60,6 +66,7 @@ class CertificateController extends Controller
 
         return view('pages.student.sertifikat.sertifikat_page', compact('data'));
     }
+
 
 
 

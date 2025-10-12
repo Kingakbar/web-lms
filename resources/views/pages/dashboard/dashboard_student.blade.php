@@ -118,7 +118,7 @@
                             <i class="bi bi-journal-bookmark me-2" style="color: var(--primary-color);"></i>
                             Kursus Berlangsung
                         </h5>
-                        <span class="badge bg-primary-soft" style="padding: 8px 16px;">
+                        <span class="badge bg-primary-soft text-black" style="padding: 8px 16px;">
                             {{ $ongoingCourses->count() }} Kursus
                         </span>
                     </div>
@@ -202,8 +202,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <a href="{{ route('courses_student.show', $enrollment->course->id) }}"
-                                        class="btn btn-primary-modern w-100"
+                                    <a href="{{ route('courses_student.index') }}" class="btn btn-primary-modern w-100"
                                         style="font-size: 0.95rem; padding: 0.875rem;">
                                         <i class="bi bi-play-circle-fill me-2"></i>
                                         Lanjutkan Belajar

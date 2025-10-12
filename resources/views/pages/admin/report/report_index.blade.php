@@ -195,14 +195,6 @@
                                             </td>
                                         </tr>
                                     @empty
-                                        <tr>
-                                            <td colspan="4" class="text-center py-5">
-                                                <div class="text-muted">
-                                                    <i class="bi bi-inbox display-4 d-block mb-3 opacity-50"></i>
-                                                    <p class="mb-0">Belum ada data pembayaran</p>
-                                                </div>
-                                            </td>
-                                        </tr>
                                     @endforelse
                                 </tbody>
                             </table>

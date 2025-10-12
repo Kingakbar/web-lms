@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Course;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\UserController;
@@ -10,10 +11,11 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProgressController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\ClientSideController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\CertificateController;
-use App\Http\Controllers\ClientSideController;
 use App\Http\Controllers\CourseAdminController;
 use App\Http\Controllers\TranscationController;
 use App\Http\Controllers\CourseStudentController;
@@ -21,7 +23,6 @@ use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\DashboardStudentController;
 use App\Http\Controllers\CourseInsctructorController;
 use App\Http\Controllers\DashboardInstructorController;
-
 
 Route::get('/', [ClientSideController::class, 'index'])->name('home');
 
@@ -34,23 +35,54 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 Route::middleware(['auth', 'role:student'])->group(function () {
-    Route::get('/dashboard/student', [DashboardStudentController::class, 'index'])->name('dashboard.student');
+
+    // ===== Dashboard Mahasiswa =====
+    Route::get('/dashboard/student', [DashboardStudentController::class, 'index'])
+        ->name('dashboard.student');
+
+    // ===== Kursus Siswa =====
     Route::resource('/courses_student', CourseStudentController::class)->parameters([
-        'courses' => 'course:slug'
+        'courses_student' => 'course:slug'
     ]);
-    Route::get('/learn/{course:slug}/lesson/{lesson:slug}', [CourseStudentController::class, 'lesson'])->name('learn.lesson');
+
+    // ===== Belajar & Lesson =====
+    Route::get('/learn/{course:slug}/lesson/{lesson:slug}', [CourseStudentController::class, 'lesson'])
+        ->name('learn.lesson');
     Route::post('/learn/{course}/{lesson}/complete', [CourseStudentController::class, 'completeLesson'])
         ->name('learn.lesson.complete');
 
-    Route::get('/learn/{course}/quiz/{quiz}', [CourseStudentController::class, 'quiz'])->name('learn.quiz');
-    Route::post('/learn/{course}/quiz/{quiz}/submit', [CourseStudentController::class, 'submitQuiz'])->name('learn.quiz.submit');
-    Route::get('/progress', [ProgressController::class, 'index'])->name('progress.index');
-    Route::get('/certificates', [CertificateController::class, 'index'])
-        ->name('certificates.index');
+    // ===== Quiz =====
+    Route::get('/learn/{course}/quiz/{quiz}', [CourseStudentController::class, 'quiz'])
+        ->name('learn.quiz');
+    Route::post('/learn/{course}/quiz/{quiz}/submit', [CourseStudentController::class, 'submitQuiz'])
+        ->name('learn.quiz.submit');
 
-    // Generate & download sertifikat
+    // ===== Progress & Sertifikat =====
+    Route::get('/progress', [ProgressController::class, 'index'])->name('progress.index');
+    Route::get('/certificates', [CertificateController::class, 'index'])->name('certificates.index');
     Route::get('/certificates/{enrollmentId}/generate', [CertificateController::class, 'generate'])
         ->name('certificates.generate');
+
+    // ===== Pembelian & Checkout =====
+    Route::get('/courses/{course:slug}/checkout', [PurchaseController::class, 'checkout'])
+        ->name('courses.checkout');
+    Route::post('/courses/{course:slug}/checkout', [PurchaseController::class, 'processPayment'])
+        ->name('courses.processPayment');
+
+    // ===== Detail Pembelian =====
+    Route::get('/purchase/{slug}/detail', [PurchaseController::class, 'detail'])
+        ->name('purchase.detail');
+
+    Route::post('/payment/process', [PurchaseController::class, 'processPayment'])->name('payment.process');
+
+    Route::get('/payment/success/{slug}', function ($slug) {
+        $course = Course::where('slug', $slug)->firstOrFail();
+        return view('pages.client.success_page', compact('course'));
+    })->name('payment.success');
+    Route::get('/payment/success/{course:slug}', [PurchaseController::class, 'success'])
+        ->name('payment.success');
+
+    Route::get('/all-class', [ClientSideController::class, 'all'])->name('courses.all');
 });
 
 Route::middleware(['auth', 'role:instructor'])->group(function () {

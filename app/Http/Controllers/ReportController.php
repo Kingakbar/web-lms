@@ -10,6 +10,7 @@ use App\Models\Payment;
 use App\Models\Enrollment;
 use App\Models\Certificate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
 class ReportController extends Controller
@@ -19,53 +20,71 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        // Ringkasan cepat
-        $totalRevenue    = Payment::where('status', 'completed')->sum('amount');
-        $totalEnrollments = Enrollment::count();
-        $totalUsers      = User::count();
-        $totalCourses    = Course::count();
+        // ========= Quick Stats (langsung query aggregate) =========
+        $stats = [
+            'totalRevenue'     => Payment::where('status', 'completed')->sum('amount'),
+            'totalEnrollments' => Enrollment::count(),
+            'totalUsers'       => User::count(),
+            'totalCourses'     => Course::count(),
+        ];
 
-        // Periode keuangan (jika ada filter dari request)
-        $start = $request->start_date ? Carbon::parse($request->start_date)->startOfDay() : Carbon::now()->startOfMonth();
-        $end   = $request->end_date   ? Carbon::parse($request->end_date)->endOfDay()     : Carbon::now()->endOfMonth();
+        // ========= Tentukan periode =========
+        if ($request->filled(['start_date', 'end_date'])) {
+            $start = Carbon::parse($request->start_date)->startOfDay();
+            $end   = Carbon::parse($request->end_date)->endOfDay();
+        } else {
+            $latestPaymentDate = Payment::max('paid_at');
 
-        // Ambil payments dalam rentang dan eager load enrollment->user
-        $payments = Payment::with('enrollment.user')
+            if ($latestPaymentDate) {
+                $start = Carbon::parse($latestPaymentDate)->startOfMonth();
+                $end   = Carbon::parse($latestPaymentDate)->endOfMonth();
+            } else {
+                $start = Carbon::now()->startOfMonth();
+                $end   = Carbon::now()->endOfMonth();
+            }
+        }
+
+        // ========= Ambil payments dalam rentang =========
+        $payments = Payment::with(['enrollment.user'])
             ->whereBetween('paid_at', [$start, $end])
             ->get();
 
-        // Hitung ringkasan keuangan dari collection payments
-        $financeRevenue = $payments->where('status', 'completed')->sum('amount');
-        $methodStats = $payments->groupBy('method')->map->count()->toArray();
+        // Hitung ringkasan langsung dari DB (lebih cepat dari collection)
+        $financeRevenue = Payment::where('status', 'completed')
+            ->whereBetween('paid_at', [$start, $end])
+            ->sum('amount');
 
-        // Bungkus ke satu variabel agar view yang memakai $finance[] tidak error
+        $methodStats = Payment::select('method', DB::raw('COUNT(*) as total'))
+            ->whereBetween('paid_at', [$start, $end])
+            ->groupBy('method')
+            ->pluck('total', 'method')
+            ->toArray();
+
         $finance = [
             'totalRevenue' => $financeRevenue,
             'methodStats'  => $methodStats,
             'payments'     => $payments,
         ];
 
-        // Kursus, users, sertifikat (seperti sebelumnya)
+        // ========= Data kursus =========
         $courses = Course::withCount('enrollments')
             ->withAvg('reviews', 'rating')
-            ->orderBy('enrollments_count', 'desc')
+            ->orderByDesc('enrollments_count')
             ->get();
 
+        // ========= Data user =========
         $users = User::withCount('enrollments')->get();
 
-        $certificates = Certificate::with('enrollment.course', 'enrollment.user')->get();
+        // ========= Data sertifikat =========
+        $certificates = Certificate::with(['enrollment.course', 'enrollment.user'])->get();
 
-        return view('pages.admin.report.report_index', compact(
-            'totalRevenue',
-            'totalEnrollments',
-            'totalUsers',
-            'totalCourses',
-            'finance',
-            'start',
-            'end',
-            'courses',
-            'users',
-            'certificates'
-        ));
+        return view('pages.admin.report.report_index', array_merge($stats, [
+            'finance'      => $finance,
+            'start'        => $start,
+            'end'          => $end,
+            'courses'      => $courses,
+            'users'        => $users,
+            'certificates' => $certificates,
+        ]));
     }
 }

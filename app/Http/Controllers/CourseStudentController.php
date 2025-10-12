@@ -18,12 +18,24 @@ class CourseStudentController extends Controller
      */
     public function index()
     {
-        $enrollments = Enrollment::with('course.category', 'course.instructor', 'course.lessons', 'course.quizzes', 'course.reviews', 'lessonCompletions')
+        $enrollments = Enrollment::with([
+            'course.category',
+            'course.instructor',
+            'course.lessons',
+            'course.quizzes',
+            'course.reviews',
+            'lessonCompletions',
+            'payments'
+        ])
             ->where('user_id', auth()->id())
+            ->whereHas('payments', function ($q) {
+                $q->where('status', '!=', 'pending');
+            })
             ->paginate(6);
 
         return view('pages.student.kursus.course_student', compact('enrollments'));
     }
+
 
 
 

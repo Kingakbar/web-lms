@@ -19,18 +19,23 @@ class DashboardStudentController extends Controller
     {
         $user = Auth::user();
 
-        // Ambil semua enrollment student
-        $enrollments = Enrollment::with(['course.lessons', 'lessonCompletions'])
+        // Ambil semua enrollment student yang sudah aktif (status pembayaran tidak pending)
+        $enrollments = Enrollment::with(['course.lessons', 'lessonCompletions', 'payments'])
             ->where('user_id', $user->id)
+            ->whereHas('payments', function ($q) {
+                $q->where('status', '!=', 'pending');
+            })
             ->get();
 
-        // Hitung kursus aktif & selesai manual
+        // Hitung kursus aktif & selesai
         $activeCourses = 0;
         $completedCourses = 0;
 
         foreach ($enrollments as $enrollment) {
-            $totalLessons   = $enrollment->course->lessons->count();
-            $completedCount = $enrollment->lessonCompletions->where('is_completed', true)->count();
+            $totalLessons   = $enrollment->course?->lessons?->count() ?? 0;
+            $completedCount = $enrollment->lessonCompletions
+                ->where('is_completed', true)
+                ->count();
 
             if ($totalLessons > 0 && $completedCount === $totalLessons) {
                 $completedCourses++;
@@ -39,29 +44,37 @@ class DashboardStudentController extends Controller
             }
         }
 
-        // ✅ Sertifikat
+        // ✅ Total sertifikat dari kursus aktif
         $totalCertificates = Certificate::whereHas('enrollment', function ($q) use ($user) {
-            $q->where('user_id', $user->id);
+            $q->where('user_id', $user->id)
+                ->whereHas('payments', fn($q2) => $q2->where('status', '!=', 'pending'));
         })->count();
 
-        // ✅ Jam belajar
+        // ✅ Total jam belajar (jumlah lesson yang diselesaikan)
         $learningHours = LessonCompletion::whereHas('enrollment', function ($q) use ($user) {
-            $q->where('user_id', $user->id);
+            $q->where('user_id', $user->id)
+                ->whereHas('payments', fn($q2) => $q2->where('status', '!=', 'pending'));
         })->count();
 
         // Kursus yang sedang berjalan (limit 2)
         $ongoingCourses = $enrollments->filter(function ($enrollment) {
-            $totalLessons   = $enrollment->course->lessons->count();
-            $completedCount = $enrollment->lessonCompletions->where('is_completed', true)->count();
+            $totalLessons   = $enrollment->course?->lessons?->count() ?? 0;
+            $completedCount = $enrollment->lessonCompletions
+                ->where('is_completed', true)
+                ->count();
 
             return $totalLessons > 0 && $completedCount < $totalLessons;
         })->take(2);
 
-        // ===================== Aktivitas Terbaru (tetap sama) =====================
+        // ===================== Aktivitas Terbaru =====================
         $activities = collect();
 
+        // ✅ Aktivitas belajar (materi)
         $lessonActivities = LessonCompletion::with('lesson.course')
-            ->whereHas('enrollment', fn($q) => $q->where('user_id', $user->id))
+            ->whereHas('enrollment', function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->whereHas('payments', fn($q2) => $q2->where('status', '!=', 'pending'));
+            })
             ->latest()
             ->take(5)
             ->get()
@@ -71,8 +84,10 @@ class DashboardStudentController extends Controller
                 'time'  => $item->created_at,
             ]);
 
+        // ✅ Aktivitas quiz
         $quizActivities = QuizAttempt::with('quiz.course')
             ->where('user_id', $user->id)
+            ->whereHas('quiz.course.enrollments.payments', fn($q) => $q->where('status', '!=', 'pending'))
             ->latest()
             ->take(5)
             ->get()
@@ -82,8 +97,12 @@ class DashboardStudentController extends Controller
                 'time'  => $item->created_at,
             ]);
 
+        // ✅ Aktivitas sertifikat
         $certificateActivities = Certificate::with('enrollment.course')
-            ->whereHas('enrollment', fn($q) => $q->where('user_id', $user->id))
+            ->whereHas('enrollment', function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->whereHas('payments', fn($q2) => $q2->where('status', '!=', 'pending'));
+            })
             ->latest()
             ->take(5)
             ->get()
@@ -100,6 +119,7 @@ class DashboardStudentController extends Controller
             ->sortByDesc('time')
             ->take(5);
 
+        // === Return ke view ===
         return view('pages.dashboard.dashboard_student', compact(
             'user',
             'activeCourses',
@@ -110,6 +130,7 @@ class DashboardStudentController extends Controller
             'activities'
         ));
     }
+
 
 
     /**

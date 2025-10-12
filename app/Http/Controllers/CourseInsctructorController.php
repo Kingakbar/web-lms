@@ -6,6 +6,8 @@ use App\Models\Course;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class CourseInsctructorController extends Controller
 {
@@ -36,28 +38,47 @@ class CourseInsctructorController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+
     public function store(Request $request)
     {
-
-
         $validated = $request->validate([
             'title'       => 'required|string|max:255',
             'slug'        => 'required|string|unique:courses,slug',
             'description' => 'required|string',
-            'thumbnail'   => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+            'thumbnail'   => 'nullable|image|mimes:jpg,jpeg,png,webp,avif|max:5120',
             'price'       => 'nullable|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
         ]);
 
-        // Tambahkan user_id
         $validated['user_id'] = auth()->id();
 
-        // Upload file jika ada
         if ($request->hasFile('thumbnail')) {
-            $validated['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
+            $image = $request->file('thumbnail');
+
+            // Nama unik
+            $filename = uniqid() . '.webp';
+
+            // Path simpan (storage/app/public/thumbnails/)
+            $path = storage_path('app/public/thumbnails/' . $filename);
+
+            // Buat direktori kalau belum ada
+            if (!file_exists(dirname($path))) {
+                mkdir(dirname($path), 0755, true);
+            }
+
+
+            $manager = new ImageManager(new Driver());
+            $processedImage = $manager->read($image->getRealPath());
+
+            $processedImage->scale(width: 800, height: 800)
+                ->toWebp(quality: 80)
+                ->save($path);
+
+            // Simpan path relatif ke disk "public" (tanpa storage/)
+            $validated['thumbnail'] = 'thumbnails/' . $filename;
         }
 
-        // Simpan data ke database
         Course::create($validated);
 
         return redirect()
@@ -87,6 +108,7 @@ class CourseInsctructorController extends Controller
     /**
      * Update the specified resource in storage.
      */
+
     public function update(Request $request, $slug)
     {
         $course = Course::where('slug', $slug)->firstOrFail();
@@ -102,15 +124,28 @@ class CourseInsctructorController extends Controller
 
         $validated['user_id'] = auth()->id();
 
-        // Jika ada upload file baru
         if ($request->hasFile('thumbnail')) {
-            // hapus thumbnail lama jika ada
+
             if ($course->thumbnail && \Storage::disk('public')->exists($course->thumbnail)) {
                 \Storage::disk('public')->delete($course->thumbnail);
             }
 
-            // upload file baru
-            $validated['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
+            $image = $request->file('thumbnail');
+            $filename = uniqid() . '.webp';
+            $path = storage_path('app/public/thumbnails/' . $filename);
+
+
+            if (!file_exists(dirname($path))) {
+                mkdir(dirname($path), 0755, true);
+            }
+
+
+            $manager = new ImageManager(new Driver());
+            $processedImage = $manager->read($image->getRealPath());
+            $processedImage->toWebp(quality: 80)->save($path);
+
+
+            $validated['thumbnail'] = 'thumbnails/' . $filename;
         }
 
         $course->update($validated);
@@ -119,7 +154,6 @@ class CourseInsctructorController extends Controller
             ->route('courses_instructor.index')
             ->with('success', 'Kursus berhasil diperbarui!');
     }
-
     /**
      * Remove the specified resource from storage.
      */

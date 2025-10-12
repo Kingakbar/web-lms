@@ -154,10 +154,6 @@
                             </div>
                         </div>
                     @empty
-                        <div class="empty-state">
-                            <i class="bi bi-receipt opacity-25"></i>
-                            <p class="text-muted mb-0">Belum ada transaksi hari ini</p>
-                        </div>
                     @endforelse
                     <div class="text-center p-3 border-top">
                         <a href="#" class="btn btn-sm btn-outline-primary">Lihat Semua Transaksi</a>
@@ -248,14 +244,6 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr>
-                                        <td colspan="5">
-                                            <div class="empty-state">
-                                                <i class="bi bi-graph-down opacity-25"></i>
-                                                <p class="text-muted mb-0">Belum ada data kursus populer</p>
-                                            </div>
-                                        </td>
-                                    </tr>
                                 @endforelse
                             </tbody>
                         </table>

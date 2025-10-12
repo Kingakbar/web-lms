@@ -15,22 +15,33 @@ class ProgressController extends Controller
     {
         $userId = auth()->id();
 
-
+        // Ambil enrollment hanya yang pembayarannya SUDAH diverifikasi
         $enrollments = Enrollment::with([
             'course.lessons',
             'lessonCompletions',
-            'certificate'
-        ])->where('user_id', $userId)->get();
+            'certificate',
+            'payments'
+        ])
+            ->where('user_id', $userId)
+            ->whereHas('payments', function ($q) {
+                $q->where('status', '!=', 'pending');
+            })
+            ->get();
 
-
+        // Hitung total kursus yang valid (tidak pending)
         $totalCourses = $enrollments->count();
+
+        // Hitung kursus yang sudah selesai semua materinya
         $completedCourses = $enrollments->filter(function ($e) {
-            return $e->lessonCompletions->where('is_completed', true)->count() === $e->course->lessons->count()
-                && $e->course->lessons->count() > 0;
+            $totalLessons = $e->course->lessons->count();
+            $completedLessons = $e->lessonCompletions->where('is_completed', true)->count();
+            return $totalLessons > 0 && $completedLessons === $totalLessons;
         })->count();
+
+        // Hitung jumlah sertifikat
         $certificates = $enrollments->whereNotNull('certificate')->count();
 
-        // Progress rata-rata
+        // Hitung rata-rata progress belajar
         $avgProgress = 0;
         if ($totalCourses > 0) {
             $sum = 0;

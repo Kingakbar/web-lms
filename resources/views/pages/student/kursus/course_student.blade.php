@@ -19,7 +19,7 @@
             <h4 class="empty-state-title">Belum Ada Kursus</h4>
             <p class="empty-state-text">Anda belum membeli kursus apapun. Mulai eksplorasi dan tingkatkan skill Anda
                 sekarang!</p>
-            <a href="{{ route('courses.index') }}" class="btn-primary-modern mt-3">
+            <a href="{{ route('home') }}" class="btn-primary-modern mt-3">
                 <i class="bi bi-search me-2"></i>
                 Jelajahi Kursus
             </a>

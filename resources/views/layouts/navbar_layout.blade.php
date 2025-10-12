@@ -49,7 +49,7 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="#courses">
+                            <li><a class="dropdown-item" href="{{ route('courses.all') }}">
                                     <i class="bi bi-grid-3x3-gap"></i>
                                     <span>Lihat Semua Kursus</span>
                                 </a></li>
@@ -73,9 +73,16 @@
                     @endguest
 
                     @auth
-                        <a href="{{ route('dashboard.student') }}" class="btn btn-primary">My Dashboard</a>
+                        @if (auth()->user()->hasRole('admin'))
+                            <a href="{{ route('dashboard.admin') }}" class="btn btn-primary">My Dashboard</a>
+                        @elseif(auth()->user()->hasRole('instructor'))
+                            <a href="{{ route('dashboard.instructor') }}" class="btn btn-primary">My Dashboard</a>
+                        @elseif(auth()->user()->hasRole('student'))
+                            <a href="{{ route('dashboard.student') }}" class="btn btn-primary">My Dashboard</a>
+                        @endif
                     @endauth
                 </div>
+
 
             </div>
         </div>

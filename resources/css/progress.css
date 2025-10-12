@@ -1,0 +1,380 @@
+.chart-card,
+.global-progress-card,
+.stat-card,
+.stats-date-badge {
+    box-shadow: var(--shadow-soft)
+}
+
+.chart-card:hover,
+.stat-card:hover {
+    box-shadow: var(--shadow-hover)
+}
+
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 15px 50px rgba(0, 0, 0, 0.12)
+}
+
+.stats-header {
+    position: relative;
+    padding: 2rem 0
+}
+
+.stats-date-badge {
+    background: linear-gradient(135deg, #f5f7fa 0, #c3cfe2 100%);
+    padding: .75rem 1.5rem;
+    border-radius: 50px;
+    font-size: .9rem;
+    font-weight: 500;
+    color: #495057
+}
+
+.chart-stat-item i,
+.stat-icon {
+    font-size: 2rem
+}
+
+.stat-card {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #fff;
+    transition: .4s cubic-bezier(.4, 0, .2, 1);
+    height: 100%
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px
+}
+
+.stat-card-primary .stat-card-overlay,
+.stat-card-primary .stat-icon,
+.stat-card-primary::before {
+    background: var(--primary-gradient)
+}
+
+.stat-card-success .stat-card-overlay,
+.stat-card-success .stat-icon,
+.stat-card-success::before {
+    background: var(--success-gradient)
+}
+
+.stat-card-warning .stat-card-overlay,
+.stat-card-warning .stat-icon,
+.stat-card-warning::before {
+    background: var(--warning-gradient)
+}
+
+.stat-card-info .stat-card-overlay,
+.stat-card-info .stat-icon,
+.stat-card-info::before {
+    background: var(--info-gradient)
+}
+
+.stat-card:hover {
+    transform: translateY(-8px)
+}
+
+.stat-card-overlay {
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    opacity: .05;
+    transition: .6s
+}
+
+.stat-card:hover .stat-card-overlay {
+    transform: scale(1.3);
+    opacity: .1
+}
+
+.stat-card-content {
+    position: relative;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem
+}
+
+.stat-icon-wrapper {
+    flex-shrink: 0
+}
+
+.stat-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transition: .3s
+}
+
+.stat-card:hover .stat-icon {
+    transform: rotateY(360deg)
+}
+
+.stat-info {
+    flex: 1
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: .25rem;
+    background: linear-gradient(135deg, #667eea 0, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: .95rem;
+    font-weight: 500;
+    margin-bottom: .5rem
+}
+
+.stat-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .25rem .75rem;
+    border-radius: 20px;
+    font-size: .8rem;
+    font-weight: 600;
+    background: rgba(102, 126, 234, .1);
+    color: #667eea
+}
+
+.stat-trend.success {
+    background: rgba(17, 153, 142, .1);
+    color: #11998e
+}
+
+.stat-trend.warning {
+    background: rgba(240, 147, 251, .1);
+    color: #f5576c
+}
+
+.stat-trend.info {
+    background: rgba(79, 172, 254, .1);
+    color: #4facfe
+}
+
+.global-progress-card {
+    background: linear-gradient(135deg, #667eea 0, #764ba2 100%);
+    border-radius: 20px;
+    padding: 2rem;
+    color: #fff
+}
+
+.modern-progress-bar,
+.progress-percentage {
+    background: rgba(255, 255, 255, .2);
+    backdrop-filter: blur(10px)
+}
+
+.progress-percentage {
+    padding: 1rem 1.5rem;
+    border-radius: 15px
+}
+
+.modern-progress-bar,
+.modern-progress-fill {
+    position: relative;
+    border-radius: 50px;
+    overflow: hidden
+}
+
+.modern-progress-bar {
+    height: 20px
+}
+
+.modern-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #fff 0, rgba(255, 255, 255, .9) 100%);
+    transition: width 1s
+}
+
+.progress-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .5), transparent);
+    animation: 2s infinite shimmer
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%)
+    }
+
+    100% {
+        transform: translateX(100%)
+    }
+}
+
+.chart-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem;
+    transition: .3s;
+    height: 100%;
+    display: flex;
+    flex-direction: column
+}
+
+.chart-header {
+    margin-bottom: 1.5rem
+}
+
+.chart-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0
+}
+
+.chart-legend-custom,
+.chart-stats {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #f8f9fa
+}
+
+.chart-legend-custom {
+    display: flex;
+    justify-content: center;
+    gap: 2rem
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: .5rem
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block
+}
+
+.legend-label {
+    font-size: .9rem;
+    font-weight: 500;
+    color: #495057
+}
+
+.chart-stats {
+    display: flex;
+    justify-content: space-around
+}
+
+.chart-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem
+}
+
+.motivational-card {
+    background: linear-gradient(135deg, #f5f7fa 0, #c3cfe2 100%);
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden
+}
+
+.quote-icon {
+    font-size: 4rem;
+    opacity: .1;
+    position: absolute;
+    top: 1rem;
+    right: 2rem
+}
+
+.motivational-card h4 {
+    color: #495057;
+    font-weight: 700;
+    position: relative
+}
+
+.motivational-card p {
+    color: #6c757d;
+    font-size: 1.1rem;
+    position: relative
+}
+
+@media (max-width:768px) {
+    .stat-card-content {
+        flex-direction: column;
+        text-align: center
+    }
+
+    .progress-percentage span,
+    .stat-number {
+        font-size: 2rem
+    }
+
+    .chart-legend-custom {
+        flex-direction: column;
+        gap: 1rem
+    }
+
+    .global-progress-card {
+        padding: 1.5rem
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0)
+    }
+}
+
+.chart-card,
+.global-progress-card,
+.stat-card {
+    animation: .6s ease-out backwards fadeInUp
+}
+
+.stat-card:first-child {
+    animation-delay: .1s
+}
+
+.stat-card:nth-child(2) {
+    animation-delay: .2s
+}
+
+.stat-card:nth-child(3) {
+    animation-delay: .3s
+}
+
+.stat-card:nth-child(4) {
+    animation-delay: .4s
+}
